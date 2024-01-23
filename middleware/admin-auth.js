@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const verifyAdmin = async (req, res, next) => {
   try {
     // get the token from the request header
-    const token = req.headers.authorization.split(" ")[1];
+    const token = req.headers?.authorization?.split(" ")[1];
     // verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     // check if the user role is admin or not and throw an error if not
