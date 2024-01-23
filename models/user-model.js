@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const USER_ROLE = require("../types/user-role");
 
 // Create a schema for users
 const userSchema = new mongoose.Schema(
@@ -30,8 +31,12 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["admin", "user"],
-      default: "user",
+      enum: [USER_ROLE.ADMIN, USER_ROLE.USER],
+      default: USER_ROLE.USER,
+    },
+    profilePicture: {
+      type: String,
+      default: "",
     },
   },
   { timestamps: true }

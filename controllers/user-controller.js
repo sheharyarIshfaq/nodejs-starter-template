@@ -56,6 +56,7 @@ const signup = async (req, res) => {
         phoneNumber: newUser.phoneNumber,
         address: newUser.address,
         role: newUser.role,
+        profilePicture: newUser.profilePicture || "",
       },
       token,
       message: "User created successfully",
@@ -97,6 +98,7 @@ const login = async (req, res) => {
           phoneNumber: user.phoneNumber,
           address: user.address,
           role: user.role,
+          profilePicture: user.profilePicture || "",
         },
         token,
         message: "Login successful",
@@ -161,6 +163,7 @@ const updateUser = async (req, res) => {
         phoneNumber: updatedUser.phoneNumber,
         address: updatedUser.address,
         role: updatedUser.role,
+        profilePicture: updatedUser.profilePicture || "",
       },
       message: "User updated successfully",
     });
@@ -189,6 +192,43 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+const uploadProfilePicture = async (req, res) => {
+  try {
+    // find user in our database using id from token payload and miunus password
+    const user = await User.findById(req.user.id).select("-password");
+
+    // if user does not exist return error
+    if (!user) {
+      return res.status(400).send({ error: "User not found" });
+    }
+
+    // update user profile picture
+    await User.findByIdAndUpdate(req.user.id, {
+      profilePicture: "/public/" + req.file.filename,
+    });
+
+    // find updated user
+    const updatedUser = await User.findById(req.user.id).select("-password");
+
+    // return updated user
+    return res.status(200).json({
+      user: {
+        id: updatedUser._id,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        email: updatedUser.email,
+        phoneNumber: updatedUser.phoneNumber,
+        address: updatedUser.address,
+        profilePicture: updatedUser.profilePicture,
+        role: updatedUser.role,
+      },
+      message: "Profile picture updated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // export all the functions
 module.exports = {
   signup,
@@ -196,4 +236,5 @@ module.exports = {
   getUser,
   updateUser,
   getAllUsers,
+  uploadProfilePicture,
 };
