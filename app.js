@@ -5,6 +5,8 @@ require("./config/db").connect();
 
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
+const morgan = require("morgan");
 
 // requiring the routes
 const userRoutes = require("./routes/user-routes");
@@ -18,6 +20,8 @@ app.use(cors());
 // set the limit of the request body size
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
+app.use(helmet());
+app.use(morgan("common"));
 
 // route to check if the api is running
 app.get("/", (req, res) => {
